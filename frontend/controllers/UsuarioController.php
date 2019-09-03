@@ -28,7 +28,7 @@ class UsuarioController extends \yii\web\Controller
               'only' => ['index',],
               'rules' => [
                   [
-                      'actions' => ['index', 'get-all-users',  'get-user', 'get-user-by-name'],
+                      'actions' => ['index', 'get-all-users',  'get-user'],
                       'allow' => true,
                       'roles' => ['?'],
                   ],
@@ -73,7 +73,7 @@ class UsuarioController extends \yii\web\Controller
     public function actionGetAllUsers()
     {
       if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-        echo json_encode([0, "Precisa Indicar o seu código"]);
+        echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
       }else{
           $queryGetUser = (new Query())->select('u.id AS id, p.nome AS nome, p.data_nasc AS data_nasc,
            p.email AS email, p.codigo AS codigo, u.usuario AS usuario, u.senha AS senha')
@@ -82,9 +82,9 @@ class UsuarioController extends \yii\web\Controller
           ->where(['p.codigo'=>$_GET["codigo"]]);
           $users = $queryGetUser->createCommand()->queryAll();
           if(count($users) > 0){
-              echo json_encode($users);
+              echo $_GET['callback']."(".json_encode($users).");";
           }else{
-              echo json_encode([1, "Nenhum usuário encontrado"]);
+              echo $_GET['callback']."(".json_encode([1, "Nenhum usuário encontrado"]).");";
           }
       }
     }
@@ -92,10 +92,10 @@ class UsuarioController extends \yii\web\Controller
     public function actionGetUser()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["id"])){
-            echo json_encode([0, "Precisa Indicar o id"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o id"]).");";
           }else{
             //$user = Usuario::find()->where(['id'=>$_GET["id"]])->one();
             $queryGetUser = (new Query())->select('u.id AS id, p.nome AS nome, p.data_nasc AS data_nasc,
@@ -105,9 +105,9 @@ class UsuarioController extends \yii\web\Controller
             ->where(['u.id'=>$_GET["id"], 'p.codigo'=>$_GET["codigo"]]);
             $user = $queryGetUser->createCommand()->queryOne();
             if(ISSET($user["id"])){
-                echo json_encode($user);
+                echo $_GET['callback']."(".json_encode($user).");";
             }else{
-                echo json_encode([1, "Não encontrado"]);
+                echo $_GET['callback']."(".json_encode([1, "Não encontrado"]).");";
             }
 
           }
@@ -118,23 +118,22 @@ class UsuarioController extends \yii\web\Controller
     public function actionGetUserByName()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
-          if (!isset($_GET["nome"])){
-            echo json_encode([0, "Precisa Indicar o nome"]);
+          if (!isset($_GET["id"])){
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o id"]).");";
           }else{
-            $name = $_GET["nome"];
-            $queryGetUsers = (new Query())->select('u.id AS id, p.nome AS nome, p.data_nasc AS data_nasc,
+            //$user = Usuario::find()->where(['id'=>$_GET["id"]])->one();
+            $queryGetUser = (new Query())->select('u.id AS id, p.nome AS nome, p.data_nasc AS data_nasc,
              p.email AS email, p.codigo AS codigo, u.usuario AS usuario, u.senha AS senha')
             ->from('pessoa AS p')
             ->join('INNER JOIN','usuario AS u', 'u.pessoa_id = p.id')
-            ->where(['p.codigo'=>$_GET["codigo"]])
-            ->andwhere("p.nome LIKE '%$name%'");
-            $users = $queryGetUsers->createCommand()->queryAll();
-            if(count($users) > 0){
-                echo json_encode($users);
+            ->where(['u.id'=>$_GET["id"], 'p.codigo'=>$_GET["codigo"]]);
+            $user = $queryGetUser->createCommand()->queryOne();
+            if(ISSET($user["id"])){
+                echo $_GET['callback']."(".json_encode($user).");";
             }else{
-                echo json_encode([1, "Não encontrado"]);
+                echo $_GET['callback']."(".json_encode([1, "Não encontrado"]).");";
             }
 
           }
@@ -146,10 +145,10 @@ class UsuarioController extends \yii\web\Controller
     {
 
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["nome"], $_GET["data_nasc"], $_GET["email"], $_GET["usuario"], $_GET["senha"])){
-            echo json_encode([0, "Indique todos as informações do usuário"]);
+            echo $_GET['callback']."(".json_encode([0, "Indique todos as informações do usuário"]).");";
           }else{
             try {
               $pessoa = new Pessoa();
@@ -159,15 +158,15 @@ class UsuarioController extends \yii\web\Controller
               $pessoa->email = $_GET["email"];
               $pessoa->codigo = $_GET["codigo"];
               if(!$pessoa->save()){
-                  echo json_encode([1, "Erro ao adicionar"]);
+                  echo $_GET['callback']."(".json_encode([1, "Erro ao adicionar"]).");";
               }else{
                   $user->pessoa_id = $pessoa->id;
                   $user->usuario = $_GET["usuario"];
                   $user->senha = $_GET["senha"];
                   if($user->save()){
-                      echo json_encode(["Adicionado!"]);
+                      echo $_GET['callback']."(".json_encode(["Adicionado!"]).");";
                   }else{
-                      echo json_encode([1, "Erro ao adicionar"]);
+                      echo $_GET['callback']."(".json_encode([1, "Erro ao adicionar"]).");";
                   }
               }
             }catch(Exception $e){

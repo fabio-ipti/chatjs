@@ -74,10 +74,10 @@ class UsuarioAmigoController extends \yii\web\Controller
     public function actionGetAllFriends()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["usuario_id"])){
-            echo json_encode([0, "Precisa Indicar o id do usuário"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o id do usuário"]).");";
           }else{
             //$user = Usuario::find()->where(['id'=>$_GET["id"]])->one();
             $queryGetUser = (new Query())->select('u.id AS id, p.nome AS nome, p.data_nasc AS data_nasc,
@@ -88,9 +88,9 @@ class UsuarioAmigoController extends \yii\web\Controller
             ->where(['a.usuario_id'=>$_GET["usuario_id"], 'p.codigo'=>$_GET["codigo"]]);
             $users = $queryGetUser->createCommand()->queryAll();
             if(count($users) > 0){
-                echo json_encode($users);
+                echo $_GET['callback']."(".json_encode($users).");";
             }else{
-                echo json_encode([1, "Não encontrado"]);
+                echo $_GET['callback']."(".json_encode([1, "Não encontrado"]).");";
             }
 
           }
@@ -101,10 +101,10 @@ class UsuarioAmigoController extends \yii\web\Controller
     public function actionAddFriend()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["usuario_id"], $_GET["amigo_id"])){
-            echo json_encode([0, "Precisa Indicar o id do usuário e do amigo"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o id do usuário e do amigo"]).");";
           }else{
             $queryGetUserAmigo = (new Query())->select('count(a.id) AS numFriends')
             ->from('pessoa AS p')
@@ -123,16 +123,16 @@ class UsuarioAmigoController extends \yii\web\Controller
                 $ua->usuario_id = $_GET["usuario_id"];
                 $ua->amigo_id = $_GET["amigo_id"];
                 if($ua->save()){
-                  echo json_encode(["Adicionado!"]);
+                  echo $_GET['callback']."(".json_encode(["Adicionado!"]).");";
                 }else{
-                  echo json_encode([1, "Erro ao adicionar"]);
+                  echo $_GET['callback']."(".json_encode([1, "Erro ao adicionar"]).");";
                 }
               }else{
-                  echo json_encode([0, "Os usuários devem pertencer ao mesmo código de acesso a API"]);
+                  echo $_GET['callback']."(".json_encode([0, "Os usuários devem pertencer ao mesmo código de acesso a API"]).");";
               }
 
             }else{
-              echo json_encode([0, "Amigo já adicionado"]);
+              echo $_GET['callback']."(".json_encode([0, "Amigo já adicionado"]).");";
             }
 
           }

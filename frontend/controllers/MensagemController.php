@@ -74,10 +74,10 @@ class MensagemController extends \yii\web\Controller
     public function actionAddMsg()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["remetente_id"], $_GET["receptor_id"], $_GET["mensagem"], $_GET["data"])){
-            echo json_encode([0, "Precisa Indicar o remetente, receptor, mensagem e a data"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o remetente, receptor, mensagem e a data"]).");";
           }else{
               $remetente = Usuario::find()->where(['id'=>$_GET["remetente_id"]])->One();
               $receptor = Usuario::find()->where(['id'=>$_GET["receptor_id"]])->One();
@@ -91,15 +91,15 @@ class MensagemController extends \yii\web\Controller
                   $mensagem->data = $_GET["data"];
                   $mensagem->mensagem = $_GET["mensagem"];
                   if($mensagem->save()){
-                    echo json_encode(["Mensagem Enviada!"]);
+                    echo $_GET['callback']."(".json_encode(["Mensagem Enviada!"]).");";
                   }else{
-                    echo json_encode([1, "Erro ao enviar mensagem"]);
+                    echo $_GET['callback']."(".json_encode([1, "Erro ao enviar mensagem"]).");";
                   }
                 }else{
-                  echo json_encode([0, "Os usuários devem ser Amigos"]);
+                  echo $_GET['callback']."(".json_encode([0, "Os usuários devem ser Amigos"]).");";
                 }
               }else{
-                  echo json_encode([0, "Os usuários devem pertencer ao mesmo código de acesso a API"]);
+                  echo $_GET['callback']."(".json_encode([0, "Os usuários devem pertencer ao mesmo código de acesso a API"]).");";
               }
 
           }
@@ -110,10 +110,10 @@ class MensagemController extends \yii\web\Controller
     public function actionGetMsgs()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["remetente_id"], $_GET["receptor_id"])){
-            echo json_encode([0, "Precisa Indicar o remetente_id e o receptor_id"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o remetente_id e o receptor_id"]).");";
           }else{
             $remetente = Usuario::find()->where(['id'=>$_GET["remetente_id"]])->One();
             $receptor = Usuario::find()->where(['id'=>$_GET["receptor_id"]])->One();
@@ -122,12 +122,12 @@ class MensagemController extends \yii\web\Controller
                 $queryGetMessages = Mensagem::find()->where(['remetente_id'=>$remetente->id, 'receptor_id'=>$receptor->id]);
                 $msgs = $queryGetMessages->createCommand()->queryAll();
                 if(count($msgs) > 0){
-                    echo json_encode($msgs);
+                    echo $_GET['callback']."(".json_encode($msgs).");";
                 }else{
-                    echo json_encode([0, "Não existem mensagens"]);
+                    echo $_GET['callback']."(".json_encode([0, "Não existem mensagens"]).");";
                 }
                 }else{
-                    echo json_encode([0, "Os usuários devem pertencer ao mesmo código de acesso a API"]);
+                    echo $_GET['callback']."(".json_encode([0, "Os usuários devem pertencer ao mesmo código de acesso a API"]).");";
                 }
           }
 
@@ -137,22 +137,22 @@ class MensagemController extends \yii\web\Controller
     public function actionGetMsgsFromRemetenteId()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["remetente_id"])){
-            echo json_encode([0, "Precisa Indicar o remetente_id"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o remetente_id"]).");";
           }else{
             $remetente = Usuario::find()->where(['id'=>$_GET["remetente_id"]])->One();
             if(ISSET($remetente) && $remetente->getPessoa()->One()->codigo == $_GET["codigo"]){
                 $queryGetMessages = Mensagem::find()->where(['remetente_id'=>$remetente->id]);
                 $msgs = $queryGetMessages->createCommand()->queryAll();
                 if(count($msgs) > 0){
-                    echo json_encode($msgs);
+                    echo $_GET['callback']."(".json_encode($msgs).");";
                 }else{
-                    echo json_encode([0, "Não existem mensagens"]);
+                    echo $_GET['callback']."(".json_encode([0, "Não existem mensagens"]).");";
                 }
             }else{
-                echo json_encode([0, "O usuário devem pertencer ao mesmo código de acesso a API"]);
+                echo $_GET['callback']."(".json_encode([0, "O usuário devem pertencer ao mesmo código de acesso a API"]).");";
             }
           }
 
@@ -162,22 +162,22 @@ class MensagemController extends \yii\web\Controller
     public function actionGetMsgsFromReceptorId()
     {
         if(!(isset($_GET["codigo"]) && !empty($_GET["codigo"]))){
-          echo json_encode([0, "Precisa Indicar o seu código"]);
+          echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o seu código"]).");";
         }else{
           if (!isset($_GET["receptor_id"])){
-            echo json_encode([0, "Precisa Indicar o receptor_id"]);
+            echo $_GET['callback']."(".json_encode([0, "Precisa Indicar o receptor_id"]).");";
           }else{
             $receptor = Usuario::find()->where(['id'=>$_GET["receptor_id"]])->One();
             if(ISSET($receptor) && $receptor->getPessoa()->One()->codigo == $_GET["codigo"]){
                 $queryGetMessages = Mensagem::find()->where(['receptor_id'=>$receptor->id]);
                 $msgs = $queryGetMessages->createCommand()->queryAll();
                 if(count($msgs) > 0){
-                    echo json_encode($msgs);
+                    echo $_GET['callback']."(".json_encode($msgs).");";
                 }else{
-                    echo json_encode([0, "Não existem mensagens"]);
+                    echo $_GET['callback']."(".json_encode([0, "Não existem mensagens"]).");";
                 }
             }else{
-                echo json_encode([0, "O usuário devem pertencer ao mesmo código de acesso a API"]);
+                echo $_GET['callback']."(".json_encode([0, "O usuário devem pertencer ao mesmo código de acesso a API"]);
             }
           }
 
